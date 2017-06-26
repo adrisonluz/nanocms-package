@@ -1,6 +1,6 @@
 <?php
 
-namespace NanoSoluctions\NanoCMS\Models;
+namespace nanosoluctions\nanocms\models;
 
 use Illuminate\Database\Eloquesnt\Models;
 

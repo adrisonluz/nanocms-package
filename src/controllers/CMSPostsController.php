@@ -1,20 +1,15 @@
-<?php
+<?php namespace NanoSoluctions\NanoCMS\Controllers;
 
-namespace Nano\NanoCMS\Controllers;
-
-// Use - Defaults
 use Illuminate\Http\Request;
-use Nano\Nano\Requests;
-use Nano\Nano\Requests\CMSUserRequest;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
-// Use - Custom
-use Nano\NanoCMS\CMSPost;
-use Nano\NanoCMS\CMSCategoria;
-use Nano\NanoCMS\CMSConfig;
 use Illuminate\Support\Facades\Input;
 
-class CMSPostsController extends \Nano\Nano\Controllers\NanoController {
+use NanoCMSPost;
+use NanoCMSCategoria;
+use NanoSoluctions\NanoConfigs\Models\NanoConfig;
+
+class NanoNanoCMSPostsController extends NanoConfigs::_PATH_CONTROLLER . '\NanoController {
 
     public function __construct(Request $request) {
         parent::__construct();
@@ -24,7 +19,7 @@ class CMSPostsController extends \Nano\Nano\Controllers\NanoController {
         $this->area = 'nano.cms.posts';
         $this->retorno = array();
         $this->request = $request->except('_token');
-        $this->retorno['categorias'] = CMSCategoria::ativos()->get();
+        $this->retorno['categorias'] = NanoCMSCategoria::ativos()->get();
 
         if (Session::has('mensagem')) {
             $this->retorno['mensagem'] = Session::get('mensagem');
@@ -36,7 +31,7 @@ class CMSPostsController extends \Nano\Nano\Controllers\NanoController {
      *   Listagem dos Post
      */
     public function index() {
-        $posts = CMSPost::ativos()
+        $posts = NanoCMSPost::ativos()
                 ->paginate(env('25'));
 
         $this->retorno['posts'] = $posts;
@@ -65,7 +60,7 @@ class CMSPostsController extends \Nano\Nano\Controllers\NanoController {
             $this->retorno['request'] = $this->request;
             return view($this->area . '.inserir')->with($this->retorno);
         } else {
-            $post = new CMSPost;
+            $post = new NanoCMSPost;
             $post->titulo = $this->request['titulo'];            
             $post->url = $this->request['url'];
             //$post->data = $this->request['data'];
@@ -105,7 +100,7 @@ class CMSPostsController extends \Nano\Nano\Controllers\NanoController {
      * 	Edição de Post
      */
     public function edit($id) {
-        $this->retorno['post'] = CMSPost::find($id);
+        $this->retorno['post'] = NanoCMSPost::find($id);
 
         return view($this->area . '.editar', $this->retorno);
     }
@@ -125,7 +120,7 @@ class CMSPostsController extends \Nano\Nano\Controllers\NanoController {
             $this->retorno['request'] = $this->request;
             return view($this->area . '.inserir')->with($this->retorno);
         } else {
-            $post = CMSPost::find($id);
+            $post = NanoCMSPost::find($id);
             $post->titulo = $this->request['titulo'];            
             $post->url = $this->request['url'];
             //$post->data = $this->request['data'];
@@ -164,7 +159,7 @@ class CMSPostsController extends \Nano\Nano\Controllers\NanoController {
      * Desativar Post
      */
     public function lixeira($id) {
-        $post = CMSPost::find($id);
+        $post = NanoCMSPost::find($id);
         $post->lixeira = 'sim';
 
         if ($post->save()) {
@@ -186,7 +181,7 @@ class CMSPostsController extends \Nano\Nano\Controllers\NanoController {
      * Ativar Post
      */
     public function ativar($id) {
-        $post = CMSPost::find($id);
+        $post = NanoCMSPost::find($id);
         $post->lixeira = '';
 
         if ($post->save()) {
@@ -208,7 +203,7 @@ class CMSPostsController extends \Nano\Nano\Controllers\NanoController {
      * 	Deletar Post
      */
     public function delete($id) {
-        if (CMSPost::find($id)->delete()) {
+        if (NanoCMSPost::find($id)->delete()) {
             Session::put('mensagem', [
                 'class' => 'alert-success',
                 'text' => '`Post excluído com sucesso!'
